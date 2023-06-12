@@ -1,111 +1,70 @@
-﻿// declared variable of Animal type with name fido
-// not yet instantiated or assigned
-Animal fido;
+﻿// Object Declaration
+Student newStudent;
 
-Console.WriteLine("What kind of animal is Fido?");
-string animalType = Console.ReadLine();
+// Initialize and Assign new object by invoking the constructor method
+newStudent = new Student("Bob Burger");
 
-if(animalType == "dog")
+Course softwareCourse = new Course(100, "Introduction to Software Development");
+
+void AddStudentToCourse(Student student, Course course)
 {
-    fido = new Dog();
-    // instatiate fido as dog at runtime
-} else {
-    fido = new Cat();
-} 
-
-
-
-// fido is an instance of its defined class, and counts as an instance of all inherited classes
-Console.WriteLine(fido is Animal);
-Console.WriteLine(fido is Dog);
-Console.WriteLine(fido is Console);
-
-// invoke methods defined on the parent class in the child
-fido.SetName("Fido the Dog");
-fido.GetName();
-
-fido.Limbs = -1;
-Console.WriteLine(fido.Limbs);
-
-List<string> names = new List<string> { "Fido", "Dorothy", "Anyaduba" };
-HashSet<string> nameSet = new HashSet<string> { "Bob", "Brody" };
-
-WriteAll(names);
-WriteAll(nameSet);
-
-void WriteAll(ICollection<string> collection)
-{
-    List<string> newList = new List<string>();
-    foreach (string name in newList)
-    {
-        collection.Add(name);
-    }
+    student.CurrentCourse = course;
+    course.AddStudentToCourse(student);
 }
 
-// abstract class, cannot be instantiated
-abstract class Animal
+// class definition
+class Student
 {
-    // members: fields and properties
-    // field
-    protected string _name;
+    // Members
+    // field: serves as variable for class
+    private string _name;
 
-    // field exposed by public property
-    private int _limbs;
+    // properties: methods for accessing fields
+    public string Name { get { return _name; } }
 
-    // property that exposes field "_limbs"
-    // default get and set methods
-    public int Limbs { get
+    // refer to the course the student is taking
+    private Course _currentCourse;
+    public Course CurrentCourse { get { return _currentCourse; } set { _currentCourse = value; } }
+
+    // constructor method: default
+    // adding any constructor removes the default constructor
+    public Student(string name)
+    {
+        Console.WriteLine($"Creating new student with the name of {name}");
+        if(name.Length > 0)
         {
-            return _limbs;
-        }
-
-        set
-        {
-            if(value >= 0)
-            {
-                _limbs = value;
-            }
+            _name = name;
         }
     }
+}
+class Course
+{
+    private int _id;
+    public int Id { get { return _id;} }
 
-    // method (also a member)
-    // [accesor] [return type] [name] ([parameters])
-    // SetName exposes setting _name
-    public void SetName(string newName)
+    private string _title;
+    public string Title { get { return _title;} }
+
+    // list must be initialized for use
+    // assignment of values on fields/properties will occur when the Course is initialized
+    // refers to all of the students enrolled in this course
+    private List<Student> _students = new List<Student>();
+    public void AddStudentToCourse(Student student)
     {
-        if (!String.IsNullOrEmpty(newName))
+        _students.Add(student);
+    }
+    public void RemoveStudentFromCourse(Student student)
+    {
+        _students.Remove(student);
+    }
+
+
+    public Course(int id, string title)
+    {
+        if (id > 0 && !String.IsNullOrEmpty(title))
         {
-            _name = newName;
+            _id = id;
+            _title = title;
         }
     }
-
-    // method exposes the _name value to get
-    public string GetName()
-    {
-        return _name;
-    }
 }
-
-// concrete class: can be instantiated
-// inherits from abstract class Animal (implements Animal)
-
-abstract class FurryAnimal: Animal
-{
-    public string FurColour { get; set; }
-}
-class Dog : FurryAnimal
-{
-    public void GetTheBall(string colour)
-    {
-        Console.WriteLine($"{_name} runs to get the {colour} ball.");
-    }
-}
-
-class Cat : FurryAnimal
-{
-    public void ScratchPost()
-    {
-        Console.WriteLine("You wake up at 3:00 AM to the sound of scratching.");
-    }
-}
-
