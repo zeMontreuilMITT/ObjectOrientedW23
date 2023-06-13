@@ -1,70 +1,102 @@
-﻿// Object Declaration
-Student newStudent;
+﻿string sName = "Bob";
+string cName = "Course";
 
-// Initialize and Assign new object by invoking the constructor method
-newStudent = new Student("Bob Burger");
+School.RegisterStudent(sName);
+School.RegisterStudent("Other Person");
+School.RegisterStudent("Name Namerson");
 
-Course softwareCourse = new Course(100, "Introduction to Software Development");
+School.RegisterCourse(cName);
+School.RegisterCourse("Advanced Courses");
 
-void AddStudentToCourse(Student student, Course course)
+Student studentToAdd = School.GetStudent(sName);
+Course courseToAdd = School.GetCourse(cName);
+
+School.RegisterStudentForCourse(studentToAdd, courseToAdd);
+
+static class School
 {
-    student.CurrentCourse = course;
-    course.AddStudentToCourse(student);
+    public static string Name { get; } = "MITT";
+    private static HashSet<Course> _courses = new HashSet<Course>();
+    private static HashSet<Student> _students = new HashSet<Student>();
+
+    public static void RegisterStudent(string newStudentName)
+    {
+        Student newStudent = new Student(newStudentName);
+        _students.Add(newStudent);
+    }
+
+    public static void RegisterCourse(string courseTitle)
+    {
+        Course newCourse = new Course(courseTitle);
+        _courses.Add(newCourse);
+        Console.WriteLine($"Total of {_courses.Count} courses.");
+    }
+
+    public static void RegisterStudentForCourse(Student student, Course course)
+    {
+        student.SetCourse(course);
+        course.AddStudentToCourse(student);
+    }
+
+    public static Student? GetStudent(string studentName)
+    {
+        Student foundStudent = _students.First(s => s.FullName == studentName);
+        return foundStudent;
+    }
+
+    public static Course? GetCourse(string courseName)
+    {
+        Course foundCourse = _courses.First(c => c.Title == courseName);
+        return foundCourse;
+    }
+
+
+    static School()
+    {
+
+    }
 }
 
-// class definition
 class Student
 {
-    // Members
-    // field: serves as variable for class
-    private string _name;
+    private string _fullName;
+    public string FullName { get {  return _fullName; } }
 
-    // properties: methods for accessing fields
-    public string Name { get { return _name; } }
-
-    // refer to the course the student is taking
-    private Course _currentCourse;
-    public Course CurrentCourse { get { return _currentCourse; } set { _currentCourse = value; } }
-
-    // constructor method: default
-    // adding any constructor removes the default constructor
-    public Student(string name)
+    private Course _course;
+    public void SetCourse(Course course)
     {
-        Console.WriteLine($"Creating new student with the name of {name}");
-        if(name.Length > 0)
+        _course = course;
+    }
+
+    public Student(string fullName)
+    {
+        if (!String.IsNullOrEmpty(fullName))
         {
-            _name = name;
+            _fullName = fullName;
         }
     }
 }
+
 class Course
 {
-    private int _id;
-    public int Id { get { return _id;} }
-
     private string _title;
-    public string Title { get { return _title;} }
+    public string Title { get { return _title; } }
 
-    // list must be initialized for use
-    // assignment of values on fields/properties will occur when the Course is initialized
-    // refers to all of the students enrolled in this course
-    private List<Student> _students = new List<Student>();
+    private HashSet<Student> _students = new HashSet<Student>();
     public void AddStudentToCourse(Student student)
     {
         _students.Add(student);
     }
-    public void RemoveStudentFromCourse(Student student)
-    {
-        _students.Remove(student);
-    }
 
-
-    public Course(int id, string title)
+    public Course(string title)
     {
-        if (id > 0 && !String.IsNullOrEmpty(title))
+        if (!String.IsNullOrEmpty(title))
         {
-            _id = id;
             _title = title;
         }
     }
 }
+// Students can Enroll in one course
+// Courses can have many students in them
+// These belong to a static School class
+// School has an AddStudentToCourse(Student s, Course c) method defined on it
