@@ -4,8 +4,8 @@
     School.RegisterInstructor("Linda", "Canada", "linda@school.ca", 10000000);
 
 
-    School.RegisterCourse("Intro to Burgers");
-    School.RegisterCourse("Advanced Courses");
+    School.RegisterCourse("Intro to Burgers", 3);
+    School.RegisterCourse("Advanced Courses", 4);
 
     Student studentToAdd = School.GetStudent("Bob");
     Course courseToAdd = School.GetCourse("Intro to Burgers");
@@ -53,9 +53,9 @@ static class School
         _instructors.Add(newInstructor);
     }
 
-    public static void RegisterCourse(string courseTitle)
+    public static void RegisterCourse(string courseTitle, int capacity)
     {
-        Course newCourse = new Course(courseTitle);
+        Course newCourse = new Course(courseTitle, capacity);
         _courses.Add(newCourse);
         Console.WriteLine($"Total of {_courses.Count} courses.");
     }
