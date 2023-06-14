@@ -1,111 +1,76 @@
-﻿// declared variable of Animal type with name fido
-// not yet instantiated or assigned
-Animal fido;
+﻿// Students can Enrol in Many courses
+// Courses can have many enrolled students
+// Enrollments are represented in the middle Enrollment class, which breaks the relationship between Student and Course
 
-Console.WriteLine("What kind of animal is Fido?");
-string animalType = Console.ReadLine();
+HashSet<Student> students = new HashSet<Student>();
+HashSet<Course> courses = new HashSet<Course>();
+HashSet<Enrollment> enrollments = new HashSet<Enrollment>();
 
-if(animalType == "dog")
+students.Add(new Student(1));
+courses.Add(new Course(2));
+
+enrollments.Add(EnrollStudentInCourse(students.First(), courses.First()));
+
+EnrollStudentInCourse(students.First(), courses.First());
+SetGrade(92, 1, 2, enrollments);
+
+
+// FUNCTIONS
+Enrollment EnrollStudentInCourse(Student student, Course course)
 {
-    fido = new Dog();
-    // instatiate fido as dog at runtime
-} else {
-    fido = new Cat();
-} 
+    Enrollment newEnrollment = new Enrollment();
 
+    // create references in enrollment to both sides of the relationship
+    newEnrollment.Student = student;
+    newEnrollment.Course = course;
 
+    // give both sides a reference to the new enrollment
+    course.Enrollments.Add(newEnrollment);
+    student.Enrollments.Add(newEnrollment);
 
-// fido is an instance of its defined class, and counts as an instance of all inherited classes
-Console.WriteLine(fido is Animal);
-Console.WriteLine(fido is Dog);
-Console.WriteLine(fido is Console);
-
-// invoke methods defined on the parent class in the child
-fido.SetName("Fido the Dog");
-fido.GetName();
-
-fido.Limbs = -1;
-Console.WriteLine(fido.Limbs);
-
-List<string> names = new List<string> { "Fido", "Dorothy", "Anyaduba" };
-HashSet<string> nameSet = new HashSet<string> { "Bob", "Brody" };
-
-WriteAll(names);
-WriteAll(nameSet);
-
-void WriteAll(ICollection<string> collection)
-{
-    List<string> newList = new List<string>();
-    foreach (string name in newList)
-    {
-        collection.Add(name);
-    }
+    return newEnrollment;
 }
 
-// abstract class, cannot be instantiated
-abstract class Animal
+void SetGrade(int newGrade, int studentId, int courseId, HashSet<Enrollment> enrollments)
 {
-    // members: fields and properties
-    // field
-    protected string _name;
-
-    // field exposed by public property
-    private int _limbs;
-
-    // property that exposes field "_limbs"
-    // default get and set methods
-    public int Limbs { get
+    foreach(Enrollment e in enrollments)
+    {
+        if(e.Student.Id == studentId && e.Course.Id == courseId)
         {
-            return _limbs;
-        }
-
-        set
-        {
-            if(value >= 0)
-            {
-                _limbs = value;
-            }
+            e.Grade = newGrade;
         }
     }
-
-    // method (also a member)
-    // [accesor] [return type] [name] ([parameters])
-    // SetName exposes setting _name
-    public void SetName(string newName)
-    {
-        if (!String.IsNullOrEmpty(newName))
-        {
-            _name = newName;
-        }
-    }
-
-    // method exposes the _name value to get
-    public string GetName()
-    {
-        return _name;
-    }
 }
 
-// concrete class: can be instantiated
-// inherits from abstract class Animal (implements Animal)
-
-abstract class FurryAnimal: Animal
+// CLASSES
+class Student
 {
-    public string FurColour { get; set; }
-}
-class Dog : FurryAnimal
-{
-    public void GetTheBall(string colour)
+    public int Id { get; set; }
+    public HashSet<Enrollment> Enrollments { get; set; } = new HashSet<Enrollment>();
+
+    public Student(int id)
     {
-        Console.WriteLine($"{_name} runs to get the {colour} ball.");
+        Id = id;
     }
 }
 
-class Cat : FurryAnimal
+class Course
 {
-    public void ScratchPost()
+    public int Id { get; set; }
+    public HashSet<Enrollment> Enrollments { get; set; } = new HashSet<Enrollment>();
+
+    public Course(int id)
     {
-        Console.WriteLine("You wake up at 3:00 AM to the sound of scratching.");
+        Id = id;
     }
 }
 
+// track the relationship between students and their courses
+class Enrollment
+{
+    public Student Student { get; set; }
+    public Course Course { get; set; }
+    public int Grade { get; set; }
+}
+
+// refactor the previous example to allow many students to enroll in many courses
