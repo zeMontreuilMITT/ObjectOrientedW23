@@ -53,9 +53,9 @@ static class School
         _instructors.Add(newInstructor);
     }
 
-    public static void RegisterCourse(string courseTitle)
+    public static void RegisterCourse(string courseTitle, int capacity)
     {
-        Course newCourse = new Course(courseTitle);
+        Course newCourse = new Course(courseTitle, capacity);
         _courses.Add(newCourse);
         Console.WriteLine($"Total of {_courses.Count} courses.");
     }
